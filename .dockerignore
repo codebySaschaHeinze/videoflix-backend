@@ -1,5 +1,3 @@
-# This file is used to specify files and directories that should be ignored by Docker when building images.
-# It is similar to .gitignore but specific to Docker.
 *.pyc
 *.pyo
 *.mo
@@ -29,4 +27,5 @@ web/static/CACHE
 stats
 Dockerfile
 .env
+.venv
 db.sqlite3
