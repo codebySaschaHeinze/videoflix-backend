@@ -152,3 +152,43 @@ class TokenRefreshView(APIView):
         )
 
         return response
+    
+
+class LogoutView(APIView):
+    """Log out user and invalidate refresh token."""
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        """Blacklist refresh token and clear auth cookies."""
+        refresh_token = request.COOKIES.get(settings.AUTH_COOKIE_REFRESH)
+
+        if not refresh_token:
+            return Response(
+                {'detail': 'Refresh token missing.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        try:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+        except TokenError:
+            return Response(
+                {'detail': 'Invalid refresh token.'},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        
+        response = Response(
+            {
+                'detail': (
+                    'Logout successful! All tokens will be deleted'
+                    'Refresh token is now invalid.'
+                )
+            },
+            status=status.HTTP_200_OK,
+        )
+
+        response.delete_cookie(settings.AUTH_COOKIE_ACCESS)
+        response.delete_cookie(settings.AUTH_COOKIE_REFRESH)
+
+        return response
