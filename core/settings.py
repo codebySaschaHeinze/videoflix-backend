@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
 
@@ -29,7 +30,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default="localhost").split(",")
 
@@ -45,12 +46,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'content.apps.ContentConfig',
+    'rest_framework',
+    'corsheaders',
     'django_rq',
     'core',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -141,9 +146,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'de-de'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Berlin'
 
 USE_I18N = True
 
@@ -154,9 +159,40 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / "static"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:4200'
+).split(',')
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': False,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+AUTH_COOKIE_ACCESS = 'access_token'
+AUTH_COOKIE_REFRESH = 'refresh_token'
+AUTH_COOKIE_HTTP_ONLY = True
+AUTH_COOKIE_SECURE = False
+AUTH_COOKIE_SAMESITE = 'Lax'
