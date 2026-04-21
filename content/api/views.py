@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from content.api.serializers import RegisterSerializer
+from content.api.utils import generate_activation_token
 
 
 class RegisterView(APIView):
@@ -17,13 +18,16 @@ class RegisterView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
+        uid, token = generate_activation_token(user)
+
         return Response(
             {
                 'user': {
                     'id': user.id,
                     'email': user.email,
                 },
-                'token': '',
+                'token': token,
+                'uid': uid,
             },
             status=status.HTTP_201_CREATED
         )
