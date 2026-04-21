@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
 
 
@@ -40,3 +40,33 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
             is_active=False,
         )
+    
+
+class LoginSerializer(serializers.Serializer):
+    """Serializer for user login."""
+
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        """validate user credentials."""
+
+        email = attrs.get('email')
+        password = attrs.get('password')
+
+        user = authenticate(
+            request=self.context.get('request'),
+            username=email,
+            password=password,
+        )
+
+        if not user or not user.is_active:
+            raise serializers.ValidationError(
+                'Please check your input and try again.'
+            )
+        
+        attrs['user'] = user
+        return attrs
+    
+
+
