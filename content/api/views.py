@@ -1,11 +1,13 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 
-from content.api.serializers import RegisterSerializer
+from content.api.serializers import LoginSerializer, RegisterSerializer
 from content.api.utils import generate_activation_token, get_user_from_uid
 
 
@@ -60,3 +62,49 @@ class ActivateAccountView(APIView):
             {'message': 'Account successfully activated.'},
             status=status.HTTP_200_OK,
         )
+    
+
+class LoginView(APIView):
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        """Log in in user and set JWT cookies."""
+        serializer = LoginSerializer(
+            data=request.data,
+            context={'request': request},
+        )
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
+        response = Response(
+            {
+                'detail': 'Login successful.',
+                'user': {
+                    'id': user.id,
+                    'username': user.email,
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
+
+        response.set_cookie(
+            key=settings.AUTH_COOKIE_ACCESS,
+            value=access_token,
+            httponly=settings.AUTH_COOKIE_HTTP_ONLY,
+            secure=settings.AUTH_COOKIE_SECURE,
+            samesite=settings.AUTH_COOKIE_SAMESITE,
+        )
+        response.set_cookie(
+            key=settings.AUTH_COOKIE_REFRESH,
+            value=refresh_token,
+            httponly=settings.AUTH_COOKIE_HTTP_ONLY,
+            secure=settings.AUTH_COOKIE_SECURE,
+            samesite=settings.AUTH_COOKIE_SAMESITE,
+        )
+
+        return response
