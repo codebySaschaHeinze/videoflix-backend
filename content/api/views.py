@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.views import APIView
 
 from content.api.serializers import LoginSerializer, RegisterSerializer
@@ -102,6 +103,49 @@ class LoginView(APIView):
         response.set_cookie(
             key=settings.AUTH_COOKIE_REFRESH,
             value=refresh_token,
+            httponly=settings.AUTH_COOKIE_HTTP_ONLY,
+            secure=settings.AUTH_COOKIE_SECURE,
+            samesite=settings.AUTH_COOKIE_SAMESITE,
+        )
+
+        return response
+    
+
+class TokenRefreshView(APIView):
+    """Refresh access token from refresh cookie."""
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        """Create a new access token from refresh token cookie."""
+        refresh_token = request.COOKIES.get(settings.AUTH_COOKIE_REFRESH)
+
+        if not refresh_token:
+            return Response(
+                {'detail': 'Refresh token missing.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        try:
+            refresh = RefreshToken(refresh_token)
+            access_token = str(refresh.access_token)
+        except TokenError:
+            return Response(
+                {'detail': 'invalid refresh token.'},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        
+        response = Response(
+            {
+                'detail': 'Token refreshed.',
+                'access': access_token,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+        response.set_cookie(
+            key=settings.AUTH_COOKIE_ACCESS,
+            value=access_token,
             httponly=settings.AUTH_COOKIE_HTTP_ONLY,
             secure=settings.AUTH_COOKIE_SECURE,
             samesite=settings.AUTH_COOKIE_SAMESITE,
