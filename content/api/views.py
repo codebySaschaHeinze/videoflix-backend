@@ -11,11 +11,14 @@ from rest_framework.views import APIView
 from content.api.serializers import (
     LoginSerializer,
     PasswordResetSerializer,
-    RegisterSerializer)
+    RegisterSerializer,
+)
 from content.api.utils import (
     generate_activation_token,
     generate_password_reset_token,
-    get_user_from_uid)
+    get_user_from_uid,
+    send_password_reset_email,
+)
 
 
 User = get_user_model()
@@ -214,7 +217,7 @@ class PasswordResetView(APIView):
         user = User.objects.filter(email=email).first()
 
         if user:
-            generate_password_reset_token(user)
+            send_password_reset_email(user)
 
         return Response(
             {'detail': 'An email has been sent to reset your password.'},

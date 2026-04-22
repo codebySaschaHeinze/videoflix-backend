@@ -199,3 +199,8 @@ AUTH_COOKIE_SECURE = False
 AUTH_COOKIE_SAMESITE = 'Lax'
 
 AUTH_USER_MODEL = 'content.User'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@videoflix.local'
+
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:4200')
