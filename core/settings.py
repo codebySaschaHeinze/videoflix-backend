@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'content.apps.ContentConfig',
     'rest_framework',
+    'authentication',
     'corsheaders',
     'django_rq',
     'core',
@@ -198,7 +199,7 @@ AUTH_COOKIE_HTTP_ONLY = True
 AUTH_COOKIE_SECURE = False
 AUTH_COOKIE_SAMESITE = 'Lax'
 
-AUTH_USER_MODEL = 'content.User'
+AUTH_USER_MODEL = 'authentication.User'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'noreply@videoflix.local'
