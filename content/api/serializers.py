@@ -73,3 +73,19 @@ class PasswordResetSerializer(serializers.Serializer):
     """Serializer for password reset request."""
 
     email = serializers.EmailField()
+
+
+class PasswordConfirmSerializer(serializers.Serializer):
+    """Serializer for password reset confirmation."""
+
+    new_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        """Validate password reset confirmation data."""
+        if attrs['new_password'] != attrs['confirm_password']:
+            raise serializers.ValidationError(
+                'Please check your input and try again.'
+            )
+        
+        return attrs

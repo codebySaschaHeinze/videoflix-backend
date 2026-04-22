@@ -4,6 +4,7 @@ from content.api.views import (
     ActivateAccountView,
     LoginView,
     LogoutView,
+    PasswordConfirmView,
     PasswordResetView,
     RegisterView,
     TokenRefreshView
@@ -16,4 +17,5 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('password_reset/', PasswordResetView.as_view(), name='password-reset'),
+    path('password_confirm/<uid64>/<token>/', PasswordConfirmView.as_view(), name='password_confirm'),
 ]

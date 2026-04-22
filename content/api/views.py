@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 
 from content.api.serializers import (
     LoginSerializer,
+    PasswordConfirmSerializer,
     PasswordResetSerializer,
     RegisterSerializer,
 )
@@ -221,5 +222,32 @@ class PasswordResetView(APIView):
 
         return Response(
             {'detail': 'An email has been sent to reset your password.'},
+            status=status.HTTP_200_OK,
+        )
+    
+
+class PasswordConfirmView(APIView):
+    """Confirm password reset with uid and token."""
+
+    permission_classes = [AllowAny]
+
+    def post(self, request, uid64, token):
+        """Set a new password for the user."""
+        user = get_user_from_uid(uid64, User)
+
+        if not user or not default_token_generator.check_token(user, token):
+            return Response(
+                {'dateil': 'Invalid reset link.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        serializer = PasswordConfirmSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user.set_password(serializer.validated_data['new_password'])
+        user.save(update_fields=['password'])
+
+        return Response(
+            {'detail': 'Your Password has been successfully reset.'},
             status=status.HTTP_200_OK,
         )
