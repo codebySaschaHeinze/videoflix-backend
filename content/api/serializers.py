@@ -69,4 +69,7 @@ class LoginSerializer(serializers.Serializer):
         return attrs
     
 
+class PasswordResetSerializer(serializers.Serializer):
+    """Serializer for password reset request."""
 
+    email = serializers.EmailField()

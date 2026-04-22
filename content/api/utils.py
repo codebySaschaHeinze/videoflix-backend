@@ -16,3 +16,9 @@ def get_user_from_uid(uid64, user_model):
         return user_model.objects.get(pk=user_id)
     except (TypeError, ValueError, OverflowError, user_model.DoesNotExist):
         return None
+    
+def generate_password_reset_token(user):
+    """Generate uid and token for password reset."""
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    return uid, token

@@ -8,8 +8,14 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.views import APIView
 
-from content.api.serializers import LoginSerializer, RegisterSerializer
-from content.api.utils import generate_activation_token, get_user_from_uid
+from content.api.serializers import (
+    LoginSerializer,
+    PasswordResetSerializer,
+    RegisterSerializer)
+from content.api.utils import (
+    generate_activation_token,
+    generate_password_reset_token,
+    get_user_from_uid)
 
 
 User = get_user_model()
@@ -192,3 +198,25 @@ class LogoutView(APIView):
         response.delete_cookie(settings.AUTH_COOKIE_REFRESH)
 
         return response
+    
+
+class PasswordResetView(APIView):
+    """Handle password reset request."""
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        """Create password reset token and return generic response."""
+        serializer = PasswordResetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data['email']
+        user = User.objects.filter(email=email).first()
+
+        if user:
+            generate_password_reset_token(user)
+
+        return Response(
+            {'detail': 'An email has been sent to reset your password.'},
+            status=status.HTTP_200_OK,
+        )
