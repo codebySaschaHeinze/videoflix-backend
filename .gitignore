@@ -17,3 +17,7 @@ media/
 .idea/
 .DS_Store
 Thumbs.db
+
+#private
+/content/apps.py
+/content/api/signals.py
