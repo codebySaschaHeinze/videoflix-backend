@@ -44,3 +44,24 @@ def send_password_reset_email(user):
         fail_silently=False,
     )
 
+
+def send_activation_email(user):
+    """Send account activation email with frontend activation link."""
+    uid, token = generate_activation_token(user)
+    activation_link = (
+        f'{settings.FRONTEN_URL}/activate'
+        f'?uid={uid}&token={token}'
+    )
+
+    send_mail(
+        subject='Activate your Videoflix account.',
+        message=(
+            'Welcome to Videoflix.\n\n'
+            f'Activate your account with this link:\n{activation_link}'
+        ),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[user.email],
+        fail_silently=False,
+    )
+
+    return uid, token

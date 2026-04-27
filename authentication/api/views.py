@@ -16,8 +16,8 @@ from authentication.api.serializers import (
 )
 from authentication.api.utils import (
     generate_activation_token,
-    generate_password_reset_token,
     get_user_from_uid,
+    send_activation_email,
     send_password_reset_email,
 )
 
@@ -36,7 +36,7 @@ class RegisterView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
-        uid, token = generate_activation_token(user)
+        uid, token = send_activation_email(user)
 
         return Response(
             {
@@ -80,7 +80,7 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        """Log in in user and set JWT cookies."""
+        """Log in user and set JWT cookies."""
         serializer = LoginSerializer(
             data=request.data,
             context={'request': request},
