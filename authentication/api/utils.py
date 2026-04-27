@@ -49,7 +49,7 @@ def send_activation_email(user):
     """Send account activation email with frontend activation link."""
     uid, token = generate_activation_token(user)
     activation_link = (
-        f'{settings.FRONTEN_URL}/activate'
+        f'{settings.FRONTEND_URL}/activate'
         f'?uid={uid}&token={token}'
     )
 
