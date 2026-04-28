@@ -44,3 +44,25 @@ class HLSManifestView(APIView):
         )
     
 
+class HLSSegmentView(APIView):
+    """Return HLS segment file for a video."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, movie_id, resolution, segment):
+        """Return selected HLS segment file."""
+        segment_path = (
+            Path(settings.MEDIA_ROOT)
+            / 'hls'
+            / f'video_{movie_id}'
+            / resolution
+            / segment
+        )
+
+        if not segment_path.exists():
+            raise Http404('Segment not found.')
+        
+        return FileResponse(
+            open(segment_path, 'rb'),
+            content_type='video/MP2T',
+        )
