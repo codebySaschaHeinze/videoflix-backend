@@ -15,6 +15,7 @@ def process_video(video_id):
         video.save(update_fields=['processing_status'])
 
         thumbnail_path = create_thumbnail(video)
+        create_hls_stream(video)
 
         video.thumbnail.name = get_media_relative_path(thumbnail_path)
         video.processing_status = Video.ProcessingStatus.READY
@@ -53,3 +54,36 @@ def create_thumbnail(video):
 def get_media_relative_path(file_path):
     """Return file path relative to media root."""
     return str(Path(file_path).relative_to(settings.MEDIA_ROOT))
+
+
+def create_hls_stream(video, resolution='720p'):
+    """Create HLS stream for uploaded videos."""
+    source_path = Path(video.source_file.path)
+    hls_dir = Path(settings.MEDIA_ROOT) / 'hls' / f'video_{video.id}' / resolution
+    hls_dir.mkdir(parents=True, exist_ok=True)
+
+    playlist_path = hls_dir / 'index.m3u8'
+    segment_pattern = hls_dir / 'segment_%03d.ts'
+
+    command = [
+        'ffmpeg',
+        '-y',
+        '-i',
+        str(source_path),
+        '-vf',
+        'scale=-2:720',
+        '-c:v',
+        'libx264',
+        '-c:a',
+        'aac',
+        '-hls_time',
+        '6',
+        '-hls_playlist_type',
+        'vod',
+        '-hls_segment_filename',
+        str(segment_pattern),
+        str(playlist_path),
+    ]
+
+    subprocess.run(command, check=True)
+    return playlist_path
