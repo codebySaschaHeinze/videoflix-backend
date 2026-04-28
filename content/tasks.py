@@ -6,6 +6,13 @@ from django.conf import settings
 from content.models import Video
 
 
+HLS_RESOLUTIONS = {
+    '480p': 480,
+    '720p': 720,
+    '1080p': 1080,
+}
+
+
 def process_video(video_id):
     """Process uploaded video in background."""
     video = Video.objects.get(id=video_id)
@@ -15,7 +22,9 @@ def process_video(video_id):
         video.save(update_fields=['processing_status'])
 
         thumbnail_path = create_thumbnail(video)
-        create_hls_stream(video)
+        
+        for resolution_name, height in HLS_RESOLUTIONS.items():
+            create_hls_stream(video, resolution_name, height)
 
         video.thumbnail.name = get_media_relative_path(thumbnail_path)
         video.processing_status = Video.ProcessingStatus.READY
@@ -56,10 +65,15 @@ def get_media_relative_path(file_path):
     return str(Path(file_path).relative_to(settings.MEDIA_ROOT))
 
 
-def create_hls_stream(video, resolution='720p'):
-    """Create HLS stream for uploaded videos."""
+def create_hls_stream(video, resolution_name, height):
+    """Create HLS stream for uploaded video."""
     source_path = Path(video.source_file.path)
-    hls_dir = Path(settings.MEDIA_ROOT) / 'hls' / f'video_{video.id}' / resolution
+    hls_dir = (
+        Path(settings.MEDIA_ROOT)
+        / 'hls'
+        / f'video_{video.id}'
+        / resolution_name
+    )
     hls_dir.mkdir(parents=True, exist_ok=True)
 
     playlist_path = hls_dir / 'index.m3u8'
@@ -71,7 +85,7 @@ def create_hls_stream(video, resolution='720p'):
         '-i',
         str(source_path),
         '-vf',
-        'scale=-2:720',
+        f'scale=-2:{height}',
         '-c:v',
         'libx264',
         '-c:a',
