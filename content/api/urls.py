@@ -4,7 +4,7 @@ from content.api.views import HLSManifestView, VideoListView
 
 
 urlpatterns = [
-    path('video/', VideoListView.as_view(), name='videollist'),
+    path('video/', VideoListView.as_view(), name='videolist'),
     path(
     'video/<int:movie_id>/<str:resolution>/index.m3u8',
     HLSManifestView.as_view(),
