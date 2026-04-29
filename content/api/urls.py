@@ -1,6 +1,6 @@
 from django.urls import path
 
-from content.api.views import HLSManifestView, HLSSegmentView, VideoListView
+from content.api.views import HLSManifestView, HLSMasterPlaylistView, HLSSegmentView, VideoListView
 
 
 urlpatterns = [
@@ -15,4 +15,9 @@ urlpatterns = [
     HLSSegmentView.as_view(),
     name='hls-segment',
     ),
+    path(
+    'video/<int:movie_id>/master.m3u8',
+    HLSMasterPlaylistView.as_view(),
+    name='hls-master-playlist',
+),
 ]

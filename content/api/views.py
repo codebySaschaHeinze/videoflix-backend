@@ -66,3 +66,28 @@ class HLSSegmentView(APIView):
             open(segment_path, 'rb'),
             content_type='video/MP2T',
         )
+    
+
+class HLSMasterPlaylistView(APIView):
+    """Return HLS master playlist for adaptive streaming."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, movie_id):
+        """Return master.m3u8 for selected video."""
+        master_path = (
+            Path(settings.MEDIA_ROOT)
+            / 'hls'
+            / f'video_{movie_id}'
+            / 'master.m3u8'
+        )
+
+        if not master_path.exists():
+            raise Http404('Master playlist not found.')
+
+        return FileResponse(
+            open(master_path, 'rb'),
+            content_type='application/vnd.apple.mpegurl',
+        )
+    
+
