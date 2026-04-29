@@ -26,6 +26,8 @@ def process_video(video_id):
         for resolution_name, height in HLS_RESOLUTIONS.items():
             create_hls_stream(video, resolution_name, height)
 
+        create_master_playlist(video)
+
         video.thumbnail.name = get_media_relative_path(thumbnail_path)
         video.processing_status = Video.ProcessingStatus.READY
         video.processing_error = ''
@@ -101,3 +103,26 @@ def create_hls_stream(video, resolution_name, height):
 
     subprocess.run(command, check=True)
     return playlist_path
+
+
+def create_master_playlist(video):
+    """Create adaptive master playlist."""
+    hls_root = (
+        Path(settings.MEDIA_ROOT)
+        / 'hls'
+        / f'video_{video.id}'
+    )
+
+    master_path = hls_root / 'master.m3u8'
+
+    content = """#EXTM3U
+#EXT-X-STREAM-INF:BANDWIDTH=800000,RESOLUTION=854x480
+480p/index.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=2800000,RESOLUTION=1280x720
+720p/index.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=5000000,RESOLUTION=1920x1080
+1080p/index.m3u8
+"""
+
+    with open(master_path, 'w', encoding='utf-8') as file:
+        file.write(content)
