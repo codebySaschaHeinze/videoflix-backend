@@ -38,4 +38,4 @@ EOF
 
 python manage.py rqworker default &
 
-exec gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 7 --reload
+exec gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 2 --reload
