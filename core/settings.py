@@ -175,7 +175,7 @@ CORS_ALLOWED_ORIGINS = os.environ.get(
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'authentication.api.authentication.CookieJWTAuthentication',
+        'authentication.authentication.CookieJWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
