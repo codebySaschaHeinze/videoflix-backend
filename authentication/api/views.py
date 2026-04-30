@@ -15,7 +15,6 @@ from authentication.api.serializers import (
     RegisterSerializer,
 )
 from authentication.api.utils import (
-    generate_activation_token,
     get_user_from_uid,
     send_activation_email,
     send_password_reset_email,
