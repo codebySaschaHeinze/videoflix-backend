@@ -170,7 +170,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CORS_ALLOWED_ORIGINS = os.environ.get(
     'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:4200'
+    'http://localhost:5500,http://127.0.0.1:5500',
+).split(',')
+
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    'CSRF_TRUSTED_ORIGINS',
+    'http://localhost:5500,http://127.0.0.1:5500',
 ).split(',')
 
 CORS_ALLOW_CREDENTIALS = True
