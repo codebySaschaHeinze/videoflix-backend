@@ -14,9 +14,11 @@ class VideoListView(ListAPIView):
     """Return available videos."""
 
 
-    queryset = Video.objects.all()
     serializer_class = VideoSerializer
     permission_classes = [IsAuthenticated]
+    queryset = Video.objects.filter(
+        processing_status=Video.ProcessingStatus.READY
+    )
 
 
 class HLSManifestView(APIView):
