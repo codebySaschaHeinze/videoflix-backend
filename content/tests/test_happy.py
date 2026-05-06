@@ -1,3 +1,5 @@
+import shutil
+
 from pathlib import Path
 
 from django.contrib.auth import get_user_model
@@ -108,3 +110,7 @@ class ContentHappyTests(APITestCase):
             test_file.write(content)
 
         return file_path
+    
+    def tearDown(self):
+        """Remove temporary test media files."""
+        shutil.rmtree('/tmp/videoflix_test_media', ignore_errors=True)
