@@ -173,6 +173,8 @@ CORS_ALLOWED_ORIGINS = os.environ.get(
     default='http://localhost:4200'
 ).split(',')
 
+CORS_ALLOW_CREDENTIALS = True
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'authentication.authentication.CookieJWTAuthentication',

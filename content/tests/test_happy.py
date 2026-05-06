@@ -35,6 +35,7 @@ class ContentHappyTests(APITestCase):
             title='Test Video',
             description='A test video description.',
             category='Drama',
+            processing_status=Video.ProcessingStatus.READY,
             source_file=SimpleUploadedFile(
                 'test.mp4',
                 b'fake video content',

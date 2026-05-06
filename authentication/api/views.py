@@ -7,6 +7,9 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.views import APIView
+from smtplib import SMTPException
+
+from django.db import transaction
 
 from authentication.api.serializers import (
     LoginSerializer,
@@ -33,9 +36,16 @@ class RegisterView(APIView):
         """Register a new inactive user."""
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
 
-        uid, token = send_activation_email(user)
+        try:
+            with transaction.atomic():
+                user = serializer.save()
+                _, token = send_activation_email(user)
+        except SMTPException:
+            return Response(
+                {'detail': 'Email service is currently unavailable.'},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
 
         return Response(
             {
@@ -44,9 +54,8 @@ class RegisterView(APIView):
                     'email': user.email,
                 },
                 'token': token,
-                'uid': uid,
             },
-            status=status.HTTP_201_CREATED
+            status=status.HTTP_201_CREATED,
         )
     
 
