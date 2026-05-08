@@ -3,22 +3,22 @@
 Backend API for the Videoflix frontend.  
 Videoflix is an educational video streaming project with user authentication, email-based account activation, password reset flow, protected video endpoints, asynchronous video processing, and HLS streaming.
 
-[Tech Stack](tech-stack)
-[Key Concepts](#key-concepts)
-[API Base URL](#api-base-url)
-[Authentication](#authentication)
-[Endpoints](#endpoints)
-[Video Processing Flow](#video-processing)
-[Data Model](#data-model)
-[Project Structure](#project-structure)
-[Environment Variables](#environment-variables)
-[Setup with Docker Compose](#setup-with-docker-compose)
-[Production Deployment Notes](#production-deployment-notes)
-[Useful Commands](#useful-commands)
-[Frontend Integration](#frontend-integration)
-[Security Notes](#security-notes)
-[Project Status](#project-status)
-[License](#license)
+- [Tech Stack](tech-stack)
+- [Key Concepts](#key-concepts)
+- [API Base URL](#api-base-url)
+- [Authentication](#authentication)
+- [Endpoints](#endpoints)
+- [Video Processing Flow](#video-processing)
+- [Data Model](#data-model)
+- [Project Structure](#project-structure)
+- [Environment Variables](#environment-variables)
+- [Setup with Docker Compose](#setup-with-docker-compose)
+- [Production Deployment Notes](#production-deployment-notes)
+- [Useful Commands](#useful-commands)
+- [Frontend Integration](#frontend-integration)
+- [Security Notes](#security-notes)
+- [Project Status](#project-status)
+- [License](#license)
 
 License Project Status Security Notes Frontend Integration
 Useful Commands
