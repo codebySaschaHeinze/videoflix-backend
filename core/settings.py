@@ -18,6 +18,17 @@ from datetime import timedelta
 load_dotenv()
 
 
+def get_env_list(key, default=''):
+    """Return comma separated environment variable as list."""
+    value = os.getenv(key, default)
+    return [item.strip() for item in value.split(',') if item.strip()]
+
+
+def get_env_bool(key, default='False'):
+    """Return boolean from environment variable."""
+    return os.getenv(key, default) == 'True'
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -168,15 +179,18 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-CORS_ALLOWED_ORIGINS = os.environ.get(
-    'CORS_ALLOWED_ORIGINS',
-    'http://localhost:5500,http://127.0.0.1:5500',
-).split(',')
-
-CSRF_TRUSTED_ORIGINS = os.environ.get(
+CSRF_TRUSTED_ORIGINS = get_env_list(
     'CSRF_TRUSTED_ORIGINS',
     'http://localhost:5500,http://127.0.0.1:5500',
-).split(',')
+)
+
+CORS_ALLOWED_ORIGINS = get_env_list(
+    'CORS_ALLOWED_ORIGINS',
+    os.getenv(
+        'CSRF_TRUSTED_ORIGINS',
+        'http://localhost:5500,http://127.0.0.1:5500',
+    ),
+)
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -210,18 +224,32 @@ AUTH_USER_MODEL = 'authentication.User'
 
 EMAIL_BACKEND = os.getenv(
     'EMAIL_BACKEND',
-    'django.core.mail.backends.console.EmailBackend',
+    'django.core.mail.backends.smtp.EmailBackend',
 )
 
 EMAIL_HOST = os.getenv('EMAIL_HOST', '')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'False') == 'True'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = get_env_bool('EMAIL_USE_TLS', 'True')
+EMAIL_USE_SSL = get_env_bool('EMAIL_USE_SSL', 'False')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 
 DEFAULT_FROM_EMAIL = os.getenv(
     'DEFAULT_FROM_EMAIL',
     EMAIL_HOST_USER,
 )
 
-FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:4200')
+FRONTEND_URL = os.getenv(
+    'FRONTEND_URL',
+    CSRF_TRUSTED_ORIGINS[0] if CSRF_TRUSTED_ORIGINS else 'http://localhost:5500',
+)
+
+REDIS_HOST = os.getenv('REDIS_HOST', 'redis')
+REDIS_PORT = os.getenv('REDIS_PORT', '6379')
+REDIS_DB = os.getenv('REDIS_DB', '0')
+
+REDIS_LOCATION = os.getenv(
+    'REDIS_LOCATION',
+    f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}',
+)
