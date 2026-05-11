@@ -21,17 +21,24 @@ def process_video(video_id):
         video.processing_status = Video.ProcessingStatus.PROCESSING
         video.save(update_fields=['processing_status'])
 
+        has_custom_thumbnail = bool(video.thumbnail)
         thumbnail_path = create_thumbnail(video)
-        
+
         for resolution_name, height in HLS_RESOLUTIONS.items():
             create_hls_stream(video, resolution_name, height)
 
         create_master_playlist(video)
 
-        video.thumbnail.name = get_media_relative_path(thumbnail_path)
         video.processing_status = Video.ProcessingStatus.READY
         video.processing_error = ''
-        video.save(update_fields=['thumbnail', 'processing_status', 'processing_error'])
+
+        update_fields = ['processing_status', 'processing_error']
+
+        if not has_custom_thumbnail:
+            video.thumbnail.name = get_media_relative_path(thumbnail_path)
+            update_fields.append('thumbnail')
+
+        video.save(update_fields=update_fields)
 
     except Exception as error:
         video.processing_status = Video.ProcessingStatus.FAILED
