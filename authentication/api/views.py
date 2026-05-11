@@ -30,6 +30,7 @@ User = get_user_model()
 class RegisterView(APIView):
     """Handle user registration."""
 
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -62,6 +63,7 @@ class RegisterView(APIView):
 class ActivateAccountView(APIView):
     """Activate user account with uid and token."""
 
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def get(self, request, uidb64, token):
@@ -85,6 +87,7 @@ class ActivateAccountView(APIView):
 
 class LoginView(APIView):
 
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -132,6 +135,7 @@ class LoginView(APIView):
 class TokenRefreshView(APIView):
     """Refresh access token from refresh cookie."""
 
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -175,6 +179,7 @@ class TokenRefreshView(APIView):
 class LogoutView(APIView):
     """Log out user and invalidate refresh token."""
 
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -215,6 +220,7 @@ class LogoutView(APIView):
 class PasswordResetView(APIView):
     """Handle password reset request."""
 
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -237,6 +243,7 @@ class PasswordResetView(APIView):
 class PasswordConfirmView(APIView):
     """Confirm password reset with uid and token."""
 
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request, uidb64, token):
