@@ -11,9 +11,22 @@ class Video(models.Model):
         READY = 'ready', 'Ready'
         FAILED = 'failed', 'Failed'
 
+
+    class Category(models.TextChoices):
+        WATER = 'water', 'Water'
+        MOUNTAINS = 'mountains', 'Mountains'
+        TREES = 'trees', 'Trees'
+        ANIMALS = 'animals', 'Animals'
+        BUILDINGS = 'buildings', 'Buildings'
+        SOULFOOD = 'soulfood', 'Soulfood'
+        BEACHES = 'beaches', 'Beaches'
+        FLOWERS = 'flower', 'Flower'
+        MISCELLANEOUS = 'miscellaneous', 'Miscellaneous'
+
+
     title = models.CharField(max_length=150)
     description = models.TextField()
-    category = models.CharField(max_length=50)
+    category = models.CharField(max_length=50, choices=Category.choices)
 
     thumbnail = models.ImageField(upload_to='thumbnails/', blank=True, null=True)
 
@@ -36,3 +49,5 @@ class Video(models.Model):
 
     def __str__(self):
         return self.title
+    
+
