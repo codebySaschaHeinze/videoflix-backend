@@ -93,10 +93,6 @@ def send_password_reset_email(user):
                     <p style="margin:0 0 32px 0;">
                         Your Videoflix team!
                     </p>
-
-                    <img src="https://api.videoflix.saschaheinze.de/static/authentication/logo_icon.png"
-                        alt="Videoflix" width="180" style="display:block; width:180px; max-width:100%; height:auto; margin-top:24px;"
-                    >
                 </td>
             </tr>
         </table>
@@ -131,13 +127,6 @@ def send_activation_email(user):
     <html lang="en">
     <body style="margin:0; padding:0; background-color:#ffffff; font-family:Arial, Helvetica, sans-serif; color:#333333;">
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:40px 24px;">
-            <tr>
-                <td align="center">
-                    <img src="https://api.videoflix.saschaheinze.de/static/authentication/logo_icon.png"
-                        alt="Videoflix" width="180" style="display:block; width:180px; max-width:100%; height:auto; margin:0 auto 32px auto;"
-                    >
-                </td>
-            </tr>
             <tr>
                 <td style="max-width:900px; margin:0 auto; font-size:18px; line-height:1.5;">
                     <p style="margin:0 0 8px 0;">
