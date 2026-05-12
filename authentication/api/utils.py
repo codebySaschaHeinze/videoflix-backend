@@ -106,10 +106,12 @@ def send_password_reset_email(user):
 def send_activation_email(user):
     """Send account activation email with frontend activation link."""
     uid, token = generate_activation_token(user)
+    frontend_url = settings.FRONTEND_URL.rstrip('/')
+
     activation_link = (
-        f'{settings.FRONTEND_URL}/activate'
+        f'{frontend_url}/activate/index.html'
         f'?uid={uid}&token={token}'
-    )
+)
 
     subject = 'Confirm your email'
     text_content = (
