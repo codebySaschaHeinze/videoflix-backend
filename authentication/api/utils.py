@@ -39,8 +39,10 @@ def generate_password_reset_token(user):
 def send_password_reset_email(user):
     """Send password reset email with frontend reset link."""
     uid, token = generate_password_reset_token(user)
+    frontend_url = settings.FRONTEND_URL.rstrip('/')
+
     reset_link = (
-        f'{settings.FRONTEND_URL}/reset-password'
+        f'{frontend_url}/pages/auth/confirm_password.html'
         f'?uid={uid}&token={token}'
     )
 
@@ -109,9 +111,9 @@ def send_activation_email(user):
     frontend_url = settings.FRONTEND_URL.rstrip('/')
 
     activation_link = (
-        f'{frontend_url}/activate/index.html'
+        f'{frontend_url}/pages/auth/activate.html'
         f'?uid={uid}&token={token}'
-)
+    )
 
     subject = 'Confirm your email'
     text_content = (
